@@ -19,6 +19,7 @@ def run_pipeline(path_to_raw_data,
                  erosion_size=0,
                  xor_size=0,
                  cpu_only=False,
+                 spot_channel=0,
                  path_to_segments=None,
                  path_to_model=None,
                  prob_thresh=0,
@@ -40,7 +41,7 @@ def run_pipeline(path_to_raw_data,
                                 skin_thresh=skin_thresh, erosion_size=erosion_size, xor_size=xor_size,
                                 skin_sigma_blur=skin_sigma_blur,
                                 sigma_dog_low=sigma_dog_1, spot_thresh=spot_thresh,
-                                path_to_spots=path_to_spots, cpu_only=cpu_only)
+                                path_to_spots=path_to_spots, cpu_only=cpu_only, spot_channel=spot_channel)
 
     if 'classification' in steps:
         path_to_spots = save_dir + '/spots_raw.pkl'
