@@ -116,7 +116,7 @@ def find_closest_nearby_nucleus(non_zero_nuc_ids, these_seg_ids, z, y, x, this_n
     return this_nuc_id
 
 
-def fill_in_traces(df, thresh, path_to_zarr, path_to_model, method='radial_dog'):
+def fill_in_traces(df, thresh, path_to_zarr, path_to_model, method='radial_dog', spot_channel=0):
     """"TODO: working on avoiding iterating over spots multiple times during multiple iterations.
     Still have bugs:  tmp_df.loc[(np.array([max_sigma < 3.0]) * np.array(max_sigma > 0.5)).flatten(), 'passed_filters'] = False
     ValueError: cannot set a frame with no defined index and a scalar"""
@@ -139,7 +139,7 @@ def fill_in_traces(df, thresh, path_to_zarr, path_to_model, method='radial_dog')
             continue
         sub_df = df[df.nucleus_id == nucleus_ids[i]]
         new_df = fill_in_trace(inten_arr, t_arr, thresh=thresh, path_to_zarr=path_to_zarr, sub_df=sub_df,
-                               path_to_model=path_to_model, method=method)
+                               path_to_model=path_to_model, method=method, spot_channel=spot_channel)
         tmp_df = pd.concat((tmp_df, new_df), axis=0, ignore_index=True)
 
     if len(tmp_df) > 0:
@@ -181,7 +181,7 @@ def fill_in_traces(df, thresh, path_to_zarr, path_to_model, method='radial_dog')
     return df
 
 
-def fill_in_trace(inten_arr, t_arr, thresh, path_to_zarr, sub_df, path_to_model, method='radial_dog'):
+def fill_in_trace(inten_arr, t_arr, thresh, path_to_zarr, sub_df, path_to_model, method='radial_dog', spot_channel=0):
     # binarize trace
     state = binarize_trace(inten_arr, t_arr, thresh)
 
@@ -199,14 +199,14 @@ def fill_in_trace(inten_arr, t_arr, thresh, path_to_zarr, sub_df, path_to_model,
             if inten_arr[on_ids[i] - 1] > 0:
                 # only use neighboring spot if it passed all filters
                 #if all(sub_df[sub_df.t == t_arr[on_ids[i] - 1]].passed_filters):
-                #    tmp_df = get_adjacent_spot_data(sub_df, t_arr[on_ids[i]], t_arr[on_ids[i]] - 1, path_to_zarr)
-                tmp_df = get_adjacent_spot_data(sub_df, t_arr[on_ids[i]], t_arr[on_ids[i]] - 1, path_to_zarr)
+                #    tmp_df = get_adjacent_spot_data(sub_df, t_arr[on_ids[i]], t_arr[on_ids[i]] - 1, path_to_zarr, spot_channel)
+                tmp_df = get_adjacent_spot_data(sub_df, t_arr[on_ids[i]], t_arr[on_ids[i]] - 1, path_to_zarr, spot_channel)
 
             # check next spot
             elif inten_arr[on_ids[i] + 1] > 0:
                 #if all(sub_df[sub_df.t == t_arr[on_ids[i] + 1]].passed_filters):
-                #    tmp_df = get_adjacent_spot_data(sub_df, t_arr[on_ids[i]], t_arr[on_ids[i]] + 1, path_to_zarr)
-                tmp_df = get_adjacent_spot_data(sub_df, t_arr[on_ids[i]], t_arr[on_ids[i]] + 1, path_to_zarr)
+                #    tmp_df = get_adjacent_spot_data(sub_df, t_arr[on_ids[i]], t_arr[on_ids[i]] + 1, path_to_zarr, spot_channel)
+                tmp_df = get_adjacent_spot_data(sub_df, t_arr[on_ids[i]], t_arr[on_ids[i]] + 1, path_to_zarr, spot_channel)
 
             # if no adjacent spots, give it up for a lost cause
             else:
@@ -217,7 +217,7 @@ def fill_in_trace(inten_arr, t_arr, thresh, path_to_zarr, sub_df, path_to_model,
     return new_df
 
 
-def get_adjacent_spot_data(sub_df, current_time_point, adjacent_time_point, path_to_zarr):
+def get_adjacent_spot_data(sub_df, current_time_point, adjacent_time_point, path_to_zarr, spot_channel=0):
     sub_sub_df = sub_df[sub_df.t == adjacent_time_point]
     if len(sub_sub_df) > 1:
         sub_sub_df = sub_sub_df[sub_sub_df.prob == np.max(sub_sub_df.prob)]
@@ -227,7 +227,7 @@ def get_adjacent_spot_data(sub_df, current_time_point, adjacent_time_point, path
 
     locations = np.array([current_time_point, z, y, x])
     locations = np.expand_dims(locations, axis=0)
-    tmp_df = extract_spot_voxels_from_zarr(path_to_zarr, locations)
+    tmp_df = extract_spot_voxels_from_zarr(path_to_zarr, locations, spot_channel=spot_channel)
 
     # pass time point
     tmp_df['t'] = current_time_point

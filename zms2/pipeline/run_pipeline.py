@@ -85,7 +85,7 @@ def run_pipeline(path_to_raw_data,
             #     print(f'number of true spots in dataframe = {len(df[df.passed_filters])}')
             df = fill_in_traces(df, thresh=fill_trace_thresh, path_to_zarr=path_to_raw_data,
                                 path_to_model=path_to_model,
-                                method=method)
+                                method=method, spot_channel=spot_channel)
         df.to_pickle(path_to_spots_filled)
 
     return df
