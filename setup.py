@@ -28,7 +28,9 @@ REQUIRED = [
     "cupy",
     "cucim",
     "napari",
-    "tensorflow>=2.11.0",
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "torchmetrics>=1.0.0",
 ]
 
 # What packages are optional?
