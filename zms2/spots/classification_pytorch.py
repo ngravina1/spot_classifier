@@ -55,6 +55,109 @@ def normalize_data(data: np.ndarray) -> np.ndarray:
 
 
 # =============================================================================
+# Simple 3D CNN (Original Architecture)
+# =============================================================================
+
+class SimpleCNN3D(nn.Module):
+    """Simple 3D CNN matching the original TensorFlow/Keras architecture.
+
+    This is a PyTorch implementation of the original model for fair comparison.
+    Architecture:
+    - Conv3D(4 filters, 3x3x3) → ReLU → MaxPool3D(2)
+    - Conv3D(4 filters, 3x3x3) → ReLU → MaxPool3D(2)
+    - Flatten → Dense(512) → ReLU → Dropout(0.5) → Dense(1)
+
+    Args:
+        in_channels: Number of input channels (default: 1 for grayscale)
+        num_classes: Number of output classes (default: 1 for binary)
+        n_filters1: Number of filters in first conv layer (default: 4)
+        n_filters2: Number of filters in second conv layer (default: 4)
+        dropout: Dropout rate (default: 0.5)
+    """
+
+    def __init__(
+        self,
+        in_channels: int = 1,
+        num_classes: int = 1,
+        n_filters1: int = 4,
+        n_filters2: int = 4,
+        dropout: float = 0.5
+    ):
+        super().__init__()
+
+        # Conv block 1
+        self.conv1 = nn.Conv3d(in_channels, n_filters1, kernel_size=3, padding=1)
+        self.pool1 = nn.MaxPool3d(2)
+
+        # Conv block 2
+        self.conv2 = nn.Conv3d(n_filters1, n_filters2, kernel_size=3, padding=1)
+        self.pool2 = nn.MaxPool3d(2)
+
+        # Calculate flattened size for a (9, 11, 11) input
+        # After conv1 + pool1: (9, 11, 11) → (4, 5, 5)
+        # After conv2 + pool2: (4, 5, 5) → (2, 2, 2)
+        # Flattened: n_filters2 * 2 * 2 * 2
+        self.flatten_size = n_filters2 * 2 * 2 * 2
+
+        # Fully connected layers
+        self.fc1 = nn.Linear(self.flatten_size, 512)
+        self.dropout = nn.Dropout(dropout)
+        self.fc2 = nn.Linear(512, num_classes)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Conv block 1
+        x = F.relu(self.conv1(x))
+        x = self.pool1(x)
+
+        # Conv block 2
+        x = F.relu(self.conv2(x))
+        x = self.pool2(x)
+
+        # Flatten
+        x = torch.flatten(x, 1)
+
+        # Fully connected
+        x = F.relu(self.fc1(x))
+        x = self.dropout(x)
+        x = self.fc2(x)
+
+        return x
+
+
+def make_simple_cnn3d(
+    depth: int = 9,
+    width: int = 11,
+    height: int = 11,
+    n_filters1: int = 4,
+    n_filters2: int = 4,
+    dropout: float = 0.5
+) -> SimpleCNN3D:
+    """Factory function to create simple 3D CNN (original architecture).
+
+    This creates a PyTorch version of the original TensorFlow/Keras model
+    for fair comparison with the same framework.
+
+    Args:
+        depth: Z dimension (default: 9)
+        width: X dimension (default: 11)
+        height: Y dimension (default: 11)
+        n_filters1: Filters in first conv layer (default: 4)
+        n_filters2: Filters in second conv layer (default: 4)
+        dropout: Dropout rate (default: 0.5)
+
+    Returns:
+        SimpleCNN3D model instance
+    """
+    return SimpleCNN3D(
+        in_channels=1,
+        num_classes=1,
+        n_filters1=n_filters1,
+        n_filters2=n_filters2,
+        dropout=dropout
+    )
+
+
+# =============================================================================
 # 3D SE-ResNet Architecture
 # =============================================================================
 
