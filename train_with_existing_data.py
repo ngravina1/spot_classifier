@@ -1,10 +1,28 @@
-"""Train PyTorch SE-ResNet3D using existing zms2 training data.
+"""
+Train PyTorch SE-ResNet3D on 3D Spot Classification Data
 
-This script loads the pre-labeled training data from zms2_trainingData/
-and trains the new PyTorch SE-ResNet3D model.
+This script demonstrates training deep 3D convolutional neural networks (SE-ResNet3D)
+for binary classification of fluorescent spots in microscopy images.
+
+Features:
+- SE-ResNet3D: 3D residual network with Squeeze-and-Excitation attention blocks
+- K-Fold cross-validation support for robust evaluation
+- Comprehensive metrics tracking (accuracy, precision, recall, AUC)
+- Automatic visualization generation
+- GPU acceleration with CUDA
 
 Usage:
-    python train_with_existing_data.py [--options]
+    # Train single model
+    python train_with_existing_data.py --mode single --epochs 100
+
+    # K-fold cross-validation
+    python train_with_existing_data.py --mode kfold --n-splits 5
+
+    # Custom architecture
+    python train_with_existing_data.py --base-channels 64 --batch-size 32
+
+Author: Nick Gravina
+Based on: zms2 pipeline (https://github.com/bschloma/zms2)
 """
 
 import argparse

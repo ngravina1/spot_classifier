@@ -1,9 +1,35 @@
-"""Compare PyTorch Simple CNN vs PyTorch SE-ResNet3D.
+"""
+Compare PyTorch Model Architectures for 3D Spot Classification
 
-This script provides a fair comparison using both models in the same framework.
+This script provides a systematic comparison of two PyTorch architectures:
+1. Simple CNN: Baseline 2-layer convolutional network (~18K parameters)
+2. SE-ResNet3D: Advanced residual network with SE attention (~900K parameters)
+
+The comparison ensures fairness by:
+- Training both models in PyTorch (same framework)
+- Using identical data splits and augmentation
+- Applying the same hyperparameters (learning rate, batch size, epochs)
+- Evaluating on the same validation set
+
+Outputs:
+- Training curves showing convergence behavior
+- Comprehensive metrics (accuracy, precision, recall, AUC)
+- Confusion matrices and ROC curves
+- Performance summary CSV
+- Trained model checkpoints
 
 Usage:
-    python compare_pytorch_models.py [--options]
+    # Default comparison (100 epochs)
+    python compare_pytorch_models.py
+
+    # Quick comparison (30 epochs)
+    python compare_pytorch_models.py --epochs 30
+
+    # Custom output directory
+    python compare_pytorch_models.py --output-dir my_comparison
+
+Author: Nick Gravina
+Based on: zms2 pipeline (https://github.com/bschloma/zms2)
 """
 
 import argparse
