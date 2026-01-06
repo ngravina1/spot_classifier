@@ -6,12 +6,13 @@ Deep learning for classifying 3D fluorescent spots in microscopy images using Py
 
 This repository extends the [zms2 image analysis pipeline](https://github.com/bschloma/zms2) (Eck, Moretti, and Schlomann, bioRxiv 2024) by implementing modern PyTorch-based deep learning models for automated spot classification in 3D microscopy data.
 
-### Key Features
+### Key Updates
 
 - **PyTorch Implementation**: Modern 3D CNNs for volumetric data classification
 - **SE-ResNet3D Architecture**: Custom residual network with Squeeze-and-Excitation attention blocks
 - **Interactive Notebook**: Complete model comparison with visualizations
 - **Comprehensive Metrics**: Accuracy, precision, recall, AUC, confusion matrices, ROC curves
+- **Clean API**: Unified training interface supporting multiple model architectures
 
 ### Technologies
 
@@ -64,25 +65,6 @@ conda activate spot_classifier
 # Install package
 pip install -e .
 ```
-
-### Running the Comparison Notebook
-
-The main demonstration is in the Jupyter notebook:
-
-```bash
-# Launch Jupyter Lab
-jupyter lab
-
-# Open notebooks/model_comparison.ipynb and run all cells
-```
-
-The notebook will:
-- Load training data
-- Train both Simple CNN and SE-ResNet3D models
-- Display comprehensive comparison visualizations
-- Show performance metrics
-
-**Expected Runtime**: ~15-20 minutes with GPU (adjust epochs to 50 for faster demo)
 
 ### Training from Python
 
