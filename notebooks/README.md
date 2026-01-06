@@ -1,100 +1,81 @@
 # Model Comparison Notebook
 
-Interactive Jupyter notebook demonstrating PyTorch model architecture comparison for 3D spot classification.
+Interactive demonstration of PyTorch 3D CNN architectures for spot classification.
 
 ## `model_comparison.ipynb`
 
-**Comprehensive comparison of Simple CNN vs SE-ResNet3D architectures**
+**Complete comparison of Simple CNN vs SE-ResNet3D**
 
-This notebook provides a complete walkthrough of training, evaluating, and comparing two PyTorch models on the same dataset.
+This notebook provides a step-by-step walkthrough of training, evaluating, and comparing two PyTorch deep learning models on the same 3D microscopy dataset.
 
 ### What's Included
 
-- **Data Loading & Exploration**: Visualize training data distribution and sample spots
-- **Model Training**: Train both Simple CNN and SE-ResNet3D with identical hyperparameters
-- **Performance Analysis**:
-  - Training curves (loss, accuracy over time)
-  - Validation metrics (accuracy, precision, recall, AUC)
-  - Confusion matrices showing prediction breakdown
-  - ROC curves for model discrimination
-- **Inference Speed**: Benchmark both models for deployment considerations
-- **Results Export**: Save all visualizations and trained models
+- **Data Loading**: Load and visualize training data distribution
+- **Model Training**: Train both architectures with identical hyperparameters
+- **Performance Metrics**: Comprehensive evaluation including:
+  - Training/validation curves (loss and accuracy)
+  - Confusion matrices
+  - ROC curves with AUC scores
+  - Classification reports
+  - Inference speed benchmarks
+- **Visual Comparison**: Side-by-side plots of all metrics
 
 ### Quick Start
 
 ```bash
-# Launch Jupyter Lab
+# From repository root
 jupyter lab notebooks/model_comparison.ipynb
 
-# Run all cells
-# Cell → Run All Cells
+# Run all cells: Cell → Run All Cells
 ```
 
-### Expected Runtime
+### Runtime
 
-- **With GPU**: ~15-20 minutes (100 epochs)
-- **With CPU**: ~2-3 hours (100 epochs)
+- **With GPU**: ~15-20 minutes (50 epochs)
+- **With CPU**: ~2-3 hours (50 epochs)
 
-Reduce epochs to 30 for faster experimentation.
+Adjust epochs in cells 9 and 12 for faster experimentation.
 
-### Generated Outputs
-
-All results are saved to the root directory:
-
-```
-comparison_training_curves.png       # Training/validation curves
-comparison_metrics.png               # Final metrics bar chart
-comparison_confusion_matrices.png    # Prediction breakdown
-comparison_roc_curves.png            # ROC curves
-model_comparison_summary.csv         # Numerical results table
-trained_models/simple_cnn_comparison.pt
-trained_models/se_resnet3d_comparison.pt
-```
-
-## Key Results
+### Key Results
 
 The notebook demonstrates:
 
-- **SE-ResNet3D achieves +3.2% accuracy improvement** over Simple CNN
-- **Better precision** (85.7% vs 73.7%) reducing false positives
+- **SE-ResNet3D achieves significantly better accuracy** than Simple CNN
+- **Better precision** reduces false positives
 - **Comparable inference speed** despite 50x more parameters
 - **Residual connections + attention** provide measurable benefits
 
-## Customization
+### Customization
 
-Modify these parameters in the training cells:
+Modify training parameters:
 
 ```python
-# Adjust training duration
-epochs = 100  # Try 30 for faster runs
-
-# Adjust batch size
-batch_size = 16  # Reduce to 8 if GPU memory is limited
-
-# Try different architectures
-base_channels = 32  # Increase to 64 for larger model
+# Cell 9 and Cell 12: Adjust these values
+epochs = 50        # Try 30 for quick demo, 100+ for final results
+batch_size = 16    # Reduce to 8 if GPU memory limited
+base_channels = 32 # Increase to 64 for larger model
 ```
 
-## Tips
+### Tips
 
-**Running on CPU?** Reduce epochs to 30 and batch size to 8 for reasonable runtime.
+**GPU Not Available?** The notebook automatically detects and uses CPU. Reduce epochs to 30 and batch_size to 8 for reasonable runtime.
 
-**Out of Memory?** Reduce `batch_size` to 8 or 4, or restart the kernel.
+**Out of Memory?** Reduce `batch_size` to 8 or 4 in the trainer creation cells.
 
-**Want to experiment?** The notebook uses the unified `trainer` API making it easy to swap models or hyperparameters.
+**Want to Experiment?** The unified `trainer` API makes it easy to swap models or adjust hyperparameters.
 
-## Understanding the Metrics
+### Understanding the Metrics
 
-- **Accuracy**: Overall correctness (higher is better)
-- **Precision**: Of predicted positives, how many are correct (reduces false alarms)
-- **Recall**: Of true positives, how many we found (reduces misses)
-- **AUC**: Overall discrimination ability (0.5 = random, 1.0 = perfect)
+- **Accuracy**: Percentage of correct predictions
+- **Precision**: Of predicted positives, what fraction are actually positive (reduces false alarms)
+- **Recall**: Of actual positives, what fraction we correctly identified (reduces misses)
+- **AUC**: Area under ROC curve - overall discrimination ability (1.0 = perfect, 0.5 = random)
 
 ## Next Steps
 
 After running the comparison:
 
 1. Review the visualizations to understand model behavior
-2. Check `model_comparison_summary.csv` for quantitative results
-3. Use the trained models (`trained_models/*.pt`) in your pipeline
-4. Experiment with different architectures or hyperparameters
+2. Experiment with different hyperparameters
+3. Try the trained models on your own data
+4. Explore the source code in `zms2/spots/` to understand the implementations
